@@ -1,0 +1,88 @@
+<script>
+//POST
+    $("#Btn").on('click', function () {
+        let postid = $('#updateId').val()
+        let url = $("#todoForm").attr("action");
+        let todo = $('#todo').val();
+        let disc = $('#disc').val();
+        let update = $('#update').val();
+        let is_verified=$('#is_verified').val();
+        console.log(postid)
+        let csrftoken = $("input[name=csrfmiddlewaretoken]").val();
+        output = ''
+        $.ajax({
+            method: 'POST',
+            url: url,
+            data: { todo: todo, disc: disc,update: update, is_verified:is_verified, csrfmiddlewaretoken: csrftoken, pid:postid},
+            success: function (response) {
+                if (response.data == "save") {
+                    todos = response.todo;
+                    todos.forEach(todo => {
+                        output +=
+                `<tr>
+                    <th scope="row">${todo.id}</th>
+                    <td>${todo.name}</td>
+                    <td>${todo.disc}</td>
+                    <td>${todo.edit}</td>
+                    <td><label>${todo.is_verifed}</label></td>
+                    <td>
+                        <a class="btn btn-outline-dark uBtn" uid="${todo.id}">Update</a>
+                        <a class="btn btn-dark dBtn" did="${todo.id}">Delete</a>
+                    </td>
+                </tr>`
+                    });
+                    $("tbody").html(output);
+                    $('#updateId').val('')
+                    $("form")[1].reset();
+                }
+            }
+        })
+    })
+</script>
+<script>
+//DELETE
+    $('tbody').on('click', '.dBtn', function () {
+        let id = $(this).attr('did');
+        let csrftoken = $("input[name=csrfmiddlewaretoken]").val();
+        mythis = this;
+        $.ajax({
+            method: 'POST',
+            url: 'delete',
+            data: { did: id, csrfmiddlewaretoken: csrftoken },
+            success: function (response) {
+                $(mythis).closest("tr").fadeOut();
+            }
+        })
+    })
+
+</script>
+
+<script>
+//UPDATE
+
+// $(document).ready(function(){
+//   $(".uBtn").click(function(){
+//     button = $("#is_verified").html('<option value="True" selected>Yes</option>');
+//     console.log(button);
+//   });
+// });
+
+
+    $('tbody').on('click', '.uBtn', function () {
+        
+        let id = $(this).attr('uid');
+        let csrftoken = $("input[name=csrfmiddlewaretoken]").val();
+        $.ajax({
+            method: 'POST',
+            url: 'update',
+            dataType: 'json',
+            data: { uid: id, csrfmiddlewaretoken: csrftoken },
+            success: function (response) {
+                $('#updateId').val(response.uid)
+                $('#todo').val(response.name)
+                $('#disc').val(response.disc)
+            }
+        })
+    })
+
+</script>
