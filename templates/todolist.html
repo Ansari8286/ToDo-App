@@ -11,85 +11,52 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">Navbar</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/">Home</a>
-                    </li>
-                </ul>
-                <form action="search" method="get" class="d-flex">
-                    <input class="form-control me-2" type="search" name='search' placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
-            </div>
-        </div>
-    </nav>
     <div class="container">
-        <div class="row">
-            <form class="col-4" action="create" id="todoForm" name="myForm" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="pid" id="updateId">
-                <div class="mb-3 my-3">
-                    <label for="exampleFormControlInput1" class="form-label">ToDo:</label>
-                    <input type="name" class="form-control" name="todo" id="todo" placeholder="What do you want to do?"
-                        required>
+        <div>
+            <div class="py-5">
+                <form  action="create" id="todoForm" name="myForm" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="pid" id="updateId">
+                    <div class="mb-3 my-3">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <div>
+                                <input type="text" class="form-control" name="todo" id="todo" placeholder="Enter Name" required>
+                            </div>
+                            <div>
+                                <input style="width: 107px;" type="file" class="form-control" name="todo" id="file"
+                                    placeholder="What do you want to do?" required>
+                            </div>
+                            <div>
+                                <button type="button" id="Btn" class="btn btn-dark">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="table-responsive">
+                    <table class="table table-striped my-2 caption-top">.
+                        <caption class="fs-4 text-black fe-semibold">File Uploads</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Sr No</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">File Name</th>
+                                <th scope="col">Method</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for todo in allTodo %}
+                            <tr>
+                                <th scope="row">{{forloop.counter}}</th>
+                                <td>{{todo.name}}</td>
+                                <td>{{todo.file}}</td>
+                                <td>
+                                    <a class="btn btn-outline-dark dBtn" did="{{todo.id}}">Delete</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
-                <div class="mb-3">
-                    <label for="exampleFormControlTextarea1" class="form-label">Discription:</label>
-                    <textarea class="form-control" style="max-height: 100px;" name="disc" id="disc" rows="3"
-                        required></textarea>
-                </div>
-                
-                <div class="mb-3 my-3">
-                    <label for="exampleFormControlInput1" class="form-label">Edit</label>
-                    <input type="name" class="form-control" name="update" id="update">
-                </div>
-                <select id="is_verified">
-                    <option value="None">Unkown</option>
-                    <option value="True">Yes</option>
-                    <option value="False" selected>No</option>
-                </select><br>
-                <button type="button" id="Btn" class="btn btn-dark mt-2">Submit</button>
-            </form>
-            <div class="col-8">
-                <h3 class="my-2">ToDo Table:</h3>
-                <table class="table table-striped my-2">
-                    <thead>
-                        <tr>
-                            <th scope="col">Sr No</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Discription</th>
-                            <th scope="col">Edit</th>
-                            <th scope="col">Verified</th>
-                            <th scope="col">Method</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for todo in allTodo %}
-                        <tr>
-                            <th scope="row">{{todo.id}}</th>
-                            <td>{{todo.name}}</td>
-                            <td>{{todo.disc}}</td>
-                            <td>{{todo.edit}}</td>
-                            <td>
-                                <label>{{todo.is_verifed}}</label>
-                            </td>
-                            <td>
-                                <a class="btn btn-outline-dark uBtn" uid="{{todo.id}}">Update</a>
-                                <a class="btn btn-dark dBtn" did="{{todo.id}}">Delete</a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>

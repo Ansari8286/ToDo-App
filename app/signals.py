@@ -6,10 +6,5 @@ from app.models import ToDo, DeleteItem
 @receiver(pre_delete, sender=ToDo)
 def before_delete(sender, instance, **kwargs):
     name = instance.name
-    disc = instance.disc
-    deleteitem = DeleteItem.objects.create(name=name, disc=disc)
-    print(deleteitem)
-
-@receiver(post_save, sender=ToDo)
-def after_save(sender, instance, **kwargs):
-    pass
+    file = instance.file
+    DeleteItem.objects.create(name=name, file=file)

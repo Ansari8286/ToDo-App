@@ -1,46 +1,62 @@
 <script>
-//POST
+    //POST
     $("#Btn").on('click', function () {
         let postid = $('#updateId').val()
         let url = $("#todoForm").attr("action");
         let todo = $('#todo').val();
-        let disc = $('#disc').val();
-        let update = $('#update').val();
-        let is_verified=$('#is_verified').val();
-        console.log(postid)
+
+        let fileInput = $('#file')[0];
+        // console.log(fileInput);
+
+        var file = fileInput.files[0];
         let csrftoken = $("input[name=csrfmiddlewaretoken]").val();
-        output = ''
-        $.ajax({
-            method: 'POST',
-            url: url,
-            data: { todo: todo, disc: disc,update: update, is_verified:is_verified, csrfmiddlewaretoken: csrftoken, pid:postid},
-            success: function (response) {
-                if (response.data == "save") {
-                    todos = response.todo;
-                    todos.forEach(todo => {
-                        output +=
-                `<tr>
-                    <th scope="row">${todo.id}</th>
-                    <td>${todo.name}</td>
-                    <td>${todo.disc}</td>
-                    <td>${todo.edit}</td>
-                    <td><label>${todo.is_verifed}</label></td>
-                    <td>
-                        <a class="btn btn-outline-dark uBtn" uid="${todo.id}">Update</a>
-                        <a class="btn btn-dark dBtn" did="${todo.id}">Delete</a>
-                    </td>
-                </tr>`
-                    });
-                    $("tbody").html(output);
-                    $('#updateId').val('')
-                    $("form")[1].reset();
+
+        var formData = new FormData();
+
+        formData.append('file', file);
+        formData.append('todo', todo);
+        formData.append('csrfmiddlewaretoken', csrftoken);
+
+        let output = ''
+        console.log(fileInput)
+        if ($('#file').val() === '') {
+            alert("Please Choose file")
+        } else if (todo === '') {
+            alert("Please Enter the Name")
+        } else {
+            $.ajax({
+                method: 'POST',
+                url: url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.data == "save") {
+                        let todos = response.todo;
+                        todos.forEach(todo => {
+                            output +=
+                                `<tr>
+                        <th scope="row">${todo.id}</th>
+                        <td>${todo.name}</td>
+                        <td>${todo.file}</td>
+                        <td>
+                            <a class="btn btn-outline-dark dBtn" did="${todo.id}">Delete</a>
+                        </td>
+                    </tr>`
+                        });
+                        $("tbody").html(output);
+                        $("#todoForm")[0].reset();
+
+                        todo.val('')
+                        fileInput.val('')
+                    }
                 }
-            }
-        })
+            })
+        }
     })
 </script>
 <script>
-//DELETE
+    //DELETE
     $('tbody').on('click', '.dBtn', function () {
         let id = $(this).attr('did');
         let csrftoken = $("input[name=csrfmiddlewaretoken]").val();
@@ -58,18 +74,10 @@
 </script>
 
 <script>
-//UPDATE
-
-// $(document).ready(function(){
-//   $(".uBtn").click(function(){
-//     button = $("#is_verified").html('<option value="True" selected>Yes</option>');
-//     console.log(button);
-//   });
-// });
-
+    //UPDATE
 
     $('tbody').on('click', '.uBtn', function () {
-        
+
         let id = $(this).attr('uid');
         let csrftoken = $("input[name=csrfmiddlewaretoken]").val();
         $.ajax({

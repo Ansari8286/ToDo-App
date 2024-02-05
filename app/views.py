@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from .models import ToDo
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+import os
 
 # Create your views here.
 def Todolist(request):
@@ -8,16 +11,17 @@ def Todolist(request):
     return render(request, 'todolist.html', {'allTodo':allTodo})
     
 def TodoForm(request):
-    if request.method == 'POST':
+    if request.method == 'POST' and request.FILES['file']:
         pid = request.POST.get('pid')
         todo = request.POST.get('todo')
-        disc = request.POST.get('disc')
-        update = request.POST.get('update')
-        is_verified = request.POST.get('is_verified')
+        uploaded_file = request.FILES['file']
+        file_path = default_storage.save('files/' + uploaded_file.name, ContentFile(uploaded_file.read()))
+
         if (pid == ''):
-            form = ToDo(name=todo, disc=disc, is_verifed=is_verified)
+            form = ToDo(name=todo, file=file_path)
         else:
-            form = ToDo(id=pid, disc=disc, name=todo, edit=update, is_verifed=is_verified)
+            form = ToDo(id=pid, file=file_path, name=todo)
+
         form.save()
         allTodo = list(ToDo.objects.values())
         return JsonResponse({'data':'save','todo':allTodo})
